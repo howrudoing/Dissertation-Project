@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ESCO Skill Taxonomy</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='css/style.css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body id='body'>
+    <header>
+      <div id='goTopLevel'>
+        <h1><a href='#'>ESCO Skill Taxonomy</a></h1><span class="tooltiptext">Go to top level</span>
+      </div>
+      <div id="currentRelation">
+      </div>
+      <div id='secondaryNodeOption'>
+        <div id="broaderOption">
+        </div>
+        <div id="narrowerOption">
+        </div>
+      </div>
+
+      <nav id="navigationBar">
+        Choose a sample skill to start:
+        <ul>
+          <li>
+            <a href='https://ec.europa.eu/esco/api/resource/skill?uri=http://data.europa.eu/esco/skill/a59708e3-e654-4e37-8b8a-741c3b756eee&language=en'>multimedia systems</a>
+          </li>
+          <li>
+            <a href='https://ec.europa.eu/esco/api/resource/occupation?uri=http://data.europa.eu/esco/occupation/ac734172-ae9a-41ab-80a0-a7b33694e027&language=en'>video and motion picture editor</a>
+          </li>
+          <li>
+            <a href='https://ec.europa.eu/esco/api/resource/skill?uri=http://data.europa.eu/esco/skill/3233330f-bb93-47ea-93b4-ed903d05d9f1&language=en'>set up multimedia equipment</a>
+          </li>
+          <li class='other'>
+            <input id='input-names' type='text' placeholder='Type in the skill name' list='artist-names'>
+            <ul id="search-range">
+              <button type="button" id="search-result-skill" class="btn btn-success btn-sm">Skill</button>
+              <button type="button" id="search-result-occupation" class="btn btn-info btn-sm">Occupation</button>
+              <button type="button" id="search-result-concept" class="btn btn-warning btn-sm">Concept</button>
+            </ul>
+            <ul id="search-result"></ul>
+          </li>
+        </ul>
+      </nav>
+
+      <div id='log-message'></div>
+
+      <a href='#' id='toggle'>Click here to hide</a>
+
+    </header>
+
+    <div class="descriptionBox descriptionTransform" id="description">
+      <button type="button" class="btn btn-primary btn-sm" id="switch1">Expand</button>
+      <div id="descriptionInnerBox">
+      </div>
+    </div>
+
+    <div id="relationOptionList">
+    </div>
+    
+    <div id='tree'>      
+    </div>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <script src='js/mootools-core-1.4.5-yc.js'></script>
+    <script src='js/jit-yc.js'></script>
+    <script src='js/index.js'></script>
+
+    
+  </body>
+</html>
