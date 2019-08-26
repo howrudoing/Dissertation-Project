@@ -323,9 +323,9 @@ function addBtnForObjArray(ht, json){
   }
   // Available buttons are listed based on ESCOn API Documentation.
   else if (json.className=='Concept'){
-    if (json._links.isInScheme !== undefined){
-      addIsInSchemeBtn (ht, json);
-    }
+    // if (json._links.isInScheme !== undefined){
+    //   addIsInSchemeBtn (ht, json);
+    // }
     if (json._links.broaderConcept !== undefined){
       addBroaderConceptBtn (ht, json);
     }
@@ -337,9 +337,9 @@ function addBtnForObjArray(ht, json){
     }
   }
   else if (json.className=='Occupation'){
-    if (json._links.isInScheme !== undefined){
-      addIsInSchemeBtn (ht, json);
-    }
+    // if (json._links.isInScheme !== undefined){
+    //   addIsInSchemeBtn (ht, json);
+    // }
     if (json._links.broaderConcept !== undefined){
       addBroaderConceptBtn (ht, json);
     }
@@ -360,9 +360,9 @@ function addBtnForObjArray(ht, json){
     }
   }
   else if (json.className=='Skill'){
-    if (json._links.isInScheme !== undefined){
-      addIsInSchemeBtn (ht, json);
-    }
+    // if (json._links.isInScheme !== undefined){
+    //   addIsInSchemeBtn (ht, json);
+    // }
     if (json._links.broaderSkillGroup !== undefined){
       addBroaderSkillGroupBtn (ht, json);
     }
@@ -392,7 +392,7 @@ function addBtnForObjArray(ht, json){
 
 // Display current displayed relation type.
 function displayCurrentRelation(input) {
-  document.getElementById('currentRelation').innerHTML = "<h5> Displaying " + input + "</h5>";
+  document.getElementById('currentRelation').innerHTML = "<h2> Displaying " + input + "</h2>";
 }
 
 // Convert the retrieved JSON object to displayable JSON
@@ -809,9 +809,9 @@ function buildGraph() {
         Node: {
           overridable: true,
           color: 'red',
-          dim: 9,
+          dim: 3,
           CanvasStyles: {
-            shadowBlur: 6,
+            shadowBlur: 2,
             shadowColor: '#633901'
           }
         },
@@ -819,7 +819,7 @@ function buildGraph() {
         Edge: {
           overridable: true,
           color: '#662403',
-          lineWidth:1.8
+          lineWidth:0.3
         },
         // Attach event handlers and add text to the labels. This method is only triggered on label creation 
         onCreateLabel: function(domElement, node){
@@ -931,27 +931,28 @@ function buildGraph() {
 
 
 // It builds up the searching results that are occupations.
-function buildOccupationResultList(ht, input) {
-  var href = 'https://ec.europa.eu/esco/api/search?text=' + input + '&language=en&type=occupation&facet=isInScheme&limit=10&offset=2';
+function buildOccupationResultList(ht) {
+  var href = 'https://ec.europa.eu/esco/api/search?text=' + document.getElementById('input-names').value + '&language=en&type=occupation&facet=isInScheme&limit=20';
   getSearchResult(ht, href);
   Log.write('Here are the matching occupations.', true);
 }
 
 // It builds up the searching results that are occupations.
-function buildSkillResultList(ht, input) {
-  var href = 'https://ec.europa.eu/esco/api/search?text=' + input + '&language=en&type=skill&facet=isInScheme&limit=10&offset=2';
+function buildSkillResultList(ht) {
+  var href = 'https://ec.europa.eu/esco/api/search?text=' + document.getElementById('input-names').value + '&language=en&type=skill&facet=isInScheme&limit=20';
   getSearchResult(ht, href);
   Log.write('Here are the matching skills.', true);
 }
 
 // It builds up the searching results that are occupations.
-function buildConceptResultList(ht, input) {
-  var href = 'https://ec.europa.eu/esco/api/search?text=' + input + '&language=en&type=concept&facet=isInScheme&limit=10&offset=2';
+function buildConceptResultList(ht) {
+  var href = 'https://ec.europa.eu/esco/api/search?text=' + document.getElementById('input-names').value + '&language=en&type=concept&facet=isInScheme&limit=20';
   getSearchResult(ht, href);
   Log.write('Here are the matching concepts.', true);
 }
 
 function getSearchResult(ht, href){
+  console.log('You are searching for: \n' + href);
   var myRequest = new XMLHttpRequest();
   // open the request and pass the HTTP method name and the resource as parameters
   myRequest.open('GET', href);
@@ -972,6 +973,7 @@ function getSearchResult(ht, href){
 // Display searching result in a list.
 function buildResultList(ht, resJSON, callback){
   var result = resJSON._embedded.results;
+  console.log('Searching Result is: ' + result);
   // If no results found
   if (result.length == 0) {
     console.log("No results found.");
@@ -983,8 +985,8 @@ function buildResultList(ht, resJSON, callback){
     result.forEach(function(each) {
       console.log(each);
       // Construct the clickable occupation names into a list.
-      var listItem = "<li class=\"search-result-link\"><a class=\"list-group-item list-group-item-action\" href=\"" 
-      + each._links.self.href + "\" >" + each._links.self.title + "</a></li>";
+      var listItem = "<a class=\"search-result-link list-group-item list-group-item-action\" href=\"" 
+      + each._links.self.href + "\" >" + each._links.self.title + "</a>";
 
       $('search-result').insertAdjacentHTML('beforeend',listItem);
     });
@@ -1005,26 +1007,26 @@ function sendTheAJAX(ht, input) {
     $('search-range').style.visibility = 'hidden';
   }
   else {
-    buildOccupationResultList(ht, input);
-    addListenerToSearchOptionBtn(ht, input);
+    buildOccupationResultList(ht);
+    // addListenerToSearchOptionBtn(ht, input);
   }
 }
 
-function addListenerToSearchOptionBtn(ht, input){
+function addListenerToSearchOptionBtn(ht){
   // Attach listener to result option buttons:
   $('search-result-skill').addEvent('click', function(e) {
     e.stop();
-    buildSkillResultList(ht, input);
+    buildSkillResultList(ht);
     Log.write('Here are the matching skills.', true);
   });
   $('search-result-occupation').addEvent('click', function(e) {
     e.stop();
-    buildOccupationResultList(ht, input);
+    buildOccupationResultList(ht);
     Log.write('Here are the matching occupations.', true);
   });
   $('search-result-concept').addEvent('click', function(e) {
     e.stop();
-    buildConceptResultList(ht, input);
+    buildConceptResultList(ht);
     Log.write('Here are the matching concepts.', true);
   });
 }
@@ -1132,7 +1134,10 @@ window.addEvent('domready', function(e) {
     loadTree(ht, href, renderTree);
   });
 
-  // Load new treemap based on band name input by user in textfield.
+  // Allow user to click result type button for different searching results.
+  addListenerToSearchOptionBtn(ht);
+
+  // Search input text by sending AJAX request to API.
   input.addEventListener('change', function(e) {
     sendTheAJAX(ht, this.value);
   });
