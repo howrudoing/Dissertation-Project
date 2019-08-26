@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' href='css/style.css'>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body id='body'>
     <header>
@@ -22,7 +23,7 @@
       </div>
 
       <nav id="navigationBar">
-        Choose a sample skill to start:
+        <!-- Choose a sample skill to start:
         <ul>
           <li>
             <a href='https://ec.europa.eu/esco/api/resource/skill?uri=http://data.europa.eu/esco/skill/a59708e3-e654-4e37-8b8a-741c3b756eee&language=en'>multimedia systems</a>
@@ -32,9 +33,9 @@
           </li>
           <li>
             <a href='https://ec.europa.eu/esco/api/resource/skill?uri=http://data.europa.eu/esco/skill/3233330f-bb93-47ea-93b4-ed903d05d9f1&language=en'>set up multimedia equipment</a>
-          </li>
+          </li> -->
           <li class='other'>
-            <input id='input-names' type='text' placeholder='Type in the skill name' list='artist-names'>
+            <input id='input-names' type='text' placeholder='Search'><button id='search-button' type="submit"><i class="fa fa-search"></i></button>
             <ul id="search-range">
               <button type="button" id="search-result-skill" class="btn btn-success btn-sm">Skill</button>
               <button type="button" id="search-result-occupation" class="btn btn-info btn-sm">Occupation</button>
