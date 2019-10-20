@@ -59,7 +59,7 @@ header.hidden {
 }
 
 /*Style the tip when hovering on the title link*/
-#goTopLevel .tooltiptext {
+#redirection .tooltiptext {
   visibility: hidden;
   width: 120px;
   background-color: rgba(10, 10, 10, 0.8);
@@ -67,20 +67,23 @@ header.hidden {
   text-align: center;
   border-radius: 6px;
   padding: 5px 0;
-  position: absolute;
   z-index: 1;
-  top: -5px;
-  right: 105%; 
-  margin-left: -60px;
+  position: absolute;
+  top: 10px;
+  left: -100px;
   
   /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
   opacity: 0;
   transition: opacity 1s;
 }
 
-#goTopLevel:hover .tooltiptext {
+#redirection:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+#redirection {
+  width: 60px;
 }
 
 #log-message {

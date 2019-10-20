@@ -392,7 +392,9 @@ function addBtnForObjArray(ht, json){
 
 // Display current displayed relation type.
 function displayCurrentRelation(input) {
+
   document.getElementById('currentRelation').innerHTML = "<h2> Displaying " + input + "</h2>";
+
 }
 
 // Convert the retrieved JSON object to displayable JSON
@@ -414,7 +416,7 @@ function getSecLvlNodes(json) {
 
     // Read title of each node.
     secondaryNodeName = loadedRelationTree.map(function(el){
-      console.log('Use map to get all concept names: ' + el.title);
+      // console.log('Use map to get all concept names: ' + el.title);
       return el.title;
     }); 
 
@@ -440,7 +442,7 @@ function getSecLvlNodesByClickingBtn(json, clickedArray) {
   // Add arrays of nodes around it.
   // Read title of each node.
   secondaryNodeName = clickedArray.map(function(el){
-    console.log('Use map to get all concept names: ' + el.title);
+    // console.log('Use map to get all concept names: ' + el.title);
     return el.title;
   }); 
 
@@ -528,16 +530,33 @@ var currentHref;
 // Store current displayed node relation.
 var currentRelation;
 
+// Store link to go back and forward
+var oldAddress = '';
+var newAddress = '';
+var historyList = [];
+var indexOfUrl = -1;
+
+var iscoHref = 'https://ec.europa.eu/esco/api/resource/taxonomy?uri=http://data.europa.eu/esco/concept-scheme/isco&language=en';
+
+function addNewHistory(url) {
+	historyList.push(url);
+	indexOfUrl++;
+	// Enable the go back button:
+	$('goBackBtn').disabled = false;
+	console.log('the go back button is enabled\n' + 'Current historyList is: \n' + JSON.stringify(historyList));
+}
+
 // It initializes the hypertree with top concepts after loading the page.
 function InitializeTree(ht, callback) {
   
   console.log('**************InitializeTree Stage**************');
-  var iscoHref = 'https://ec.europa.eu/esco/api/resource/taxonomy?uri=http://data.europa.eu/esco/concept-scheme/isco&language=en';
+  
   // Request json format data through ESCO API.
   new Request.JSON({
     url: iscoHref,
     // If the GET request is successful, build the hyper tree with the JSON object inside the file.
     onSuccess: function(json) {
+    	addNewHistory(iscoHref);
       // Initialize all pre loaded JSON.
       // loadedJSONofSecondaryLevelNodes = [];
       currentRelation = '';
@@ -564,7 +583,9 @@ function InitializeTree(ht, callback) {
             var lowerLevel = json._links.narrowerConcept.map(function(el){
               return el.title;
             });
-            console.log('Third level nodes are: ' + lowerLevel);
+            // Enable the go back function
+            oldAddress = currentHref;
+            // console.log('Third level nodes are: ' + lowerLevel);
             resolve(lowerLevel);
           },
           onFailure: function(error) {
@@ -600,9 +621,10 @@ function loadTree(ht, clickedNode, callback) {
   if (clickedNode.indexOf('https://') > -1){
     hrefToVisualize = clickedNode;
     console.log('Input is an URL.');
+
   }
   // If that is a node name, look for its href through JSON retrieved last time.
-  else if (secondaryNodeName.includes(clickedNode)){
+  else {
     for (var i=0 ; i < secondaryNodeName.length ; i++){
       // If href is found through the JSON.
       if (loadedRelationTree[i].title == clickedNode) {
@@ -613,11 +635,6 @@ function loadTree(ht, clickedNode, callback) {
         Log.write('Looking for the node...', true);
       }
     }
-  }
-  // If that is a third level node:
-  else {
-    // Search through the JSON response containing all third level nodes.
-
   }
 
   // If user clicks the centre node.
@@ -633,7 +650,7 @@ function loadTree(ht, clickedNode, callback) {
     url: hrefToVisualize,
     // If the GET request is successful, build the hyper tree with the JSON object inside the file.
     onSuccess: function(json) {
-
+    	addNewHistory(hrefToVisualize);
       // Initialize all pre loaded JSON.
       // loadedJSONofSecondaryLevelNodes = [];
       currentRelation = '';
@@ -675,7 +692,7 @@ function loadTree(ht, clickedNode, callback) {
 
       // Parse down the titles for each response.
       result.then(res=>{
-        console.log('All JSON responses are: '+ JSON.stringify(res));
+        // console.log('All JSON responses are: '+ JSON.stringify(res));
         displayDescription(json);
 
         json = buildTreeJSON(output,json,res);
@@ -720,7 +737,7 @@ function loadTreeByClickingBtn(ht, json, clickedArray, callback){
             return el.title;
           });
         }
-        console.log('Third level nodes are: ' + lowerLevel);
+        // console.log('Third level nodes are: ' + lowerLevel);
         resolve(lowerLevel);
       },
       onFailure: function(error) {
@@ -914,9 +931,11 @@ function buildGraph() {
 
           if (node._depth <= 1) {
             domElement.className = 'node depth0';
-          } else if(node._depth == 2){
+          } 
+          else if(node._depth == 2){
             domElement.className = 'node depth2';
-          } else {
+          } 
+          else {
             style.display = 'none';
           }
 
@@ -1116,6 +1135,79 @@ window.addEvent('domready', function(e) {
     document.getElementById('broaderOption').innerHTML = "";
     document.getElementById('narrowerOption').innerHTML = "";
     InitializeTree(ht, renderTree);
+  });
+
+  // Disable them in page load.
+  $('goForwardBtn').disabled = true;
+  $('goBackBtn').disabled = true;
+
+  // Allow user to go back to the original hyper tree by clicking on the topic.
+  $('goBackBtn').addEvent('click', function(e) {
+    e.stop();
+    // Refresh previous loaded buttons.
+    document.getElementById('broaderOption').innerHTML = "";
+    document.getElementById('narrowerOption').innerHTML = "";
+    console.log('Current indexOfUrl is: ' + indexOfUrl);
+    // Check if there exists one URL before current one.
+    // Remember to minus size by 1 as an arrayList with size 1 only contains one
+    // element with index 0.
+    if (0 < indexOfUrl) {
+      try {
+        indexOfUrl--;
+
+        // Display the previous page.
+        var pageUrl = historyList[indexOfUrl];
+        console.log(pageUrl);
+        loadTree(ht, pageUrl, renderTree);
+        // remove the last link from history
+        historyList.pop();
+        indexOfUrl--;
+
+        $('goForwardBtn').disabled = false;
+
+        // Disable the backButton if no more previous URL exists.
+        if (indexOfUrl == 0) {
+          $('goBackBtn').disabled = true;
+        }
+      } 
+      catch (e){
+      	console.log('Error in go back function.\n' + e);
+      } 
+  	}
+  });
+
+  // Allow user to go back to the original hyper tree by clicking on the topic.
+  $('goForwardBtn').addEvent('click', function(e) {
+    e.stop();
+    // Refresh previous loaded buttons.
+    document.getElementById('broaderOption').innerHTML = "";
+    document.getElementById('narrowerOption').innerHTML = "";
+    console.log('Current indexOfUrl is: ' + indexOfUrl);
+
+	if (indexOfUrl < historyList.length-1) {
+      try {
+        indexOfUrl++;
+        indexOfUrl++;
+
+        // Display the next page.
+        var pageUrl = historyList[indexOfUrl];
+        console.log(pageUrl);
+        loadTree(ht, pageUrl, renderTree);
+        // remove the last duplicate link from history
+        historyList.pop();
+        indexOfUrl--;
+
+        $('goBackBtn').disabled = false;
+
+        // Disable the forwardButton if no more next URL exists.
+        if (indexOfUrl == historyList.length-1) {
+          $('goForwardBtn').disabled = true;
+        }
+      } 
+      catch (e){
+      	console.log('Error in go forward function.\n' + e);
+      } 
+  	}
   });
 
   // Load new treemap based on links clicked by user.
