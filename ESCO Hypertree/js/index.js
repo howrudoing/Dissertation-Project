@@ -553,7 +553,7 @@ function InitializeTree(ht, callback) {
   
   // Request json format data through ESCO API.
   new Request.JSON({
-    url: iscoHref,
+    url: iscoHref.replace("10.226.41.51", "ec.europa.eu"),
     // If the GET request is successful, build the hyper tree with the JSON object inside the file.
     onSuccess: function(json) {
     	addNewHistory(iscoHref);
@@ -574,7 +574,7 @@ function InitializeTree(ht, callback) {
       // Use promise to make sure all responses from API requests are retrieved before the hypertree construction.
       var promises = loadedRelationTree.map(({href}) => new Promise((resolve, reject) => {
         new Request.JSON({
-          url: href,
+          url: href.replace("10.226.41.51", "ec.europa.eu"),
           // If the GET request is successful, build the hyper tree with the JSON object inside the file.
           onSuccess: function(json) {
             // Store this secondary node JSON to use globally.
@@ -647,7 +647,7 @@ function loadTree(ht, clickedNode, callback) {
   // Request json format data through ESCO API.
   new Request.JSON({
     // url should be the href for clicked node.
-    url: hrefToVisualize,
+    url: hrefToVisualize.replace("10.226.41.51", "ec.europa.eu"),
     // If the GET request is successful, build the hyper tree with the JSON object inside the file.
     onSuccess: function(json) {
     	addNewHistory(hrefToVisualize);
@@ -669,7 +669,7 @@ function loadTree(ht, clickedNode, callback) {
       // Use promise to make sure all responses from API requests are retrieved before the hypertree construction and visualization.
       var promises = chooseAvailRelationSecLvl(json).map(({href}) => new Promise((resolve, reject) => {
         new Request.JSON({
-          url: href,
+          url: href.replace("10.226.41.51", "ec.europa.eu"),
           // If the GET request is successful, build the hyper tree with the JSON object inside the file.
           onSuccess: function(json) {
             // Store this secondary node JSON to use globally.
@@ -713,7 +713,8 @@ function loadTreeByClickingBtn(ht, json, clickedArray, callback){
   // Initialize all pre loaded JSON.
   // loadedJSONofSecondaryLevelNodes = [];
   JSONResponse = json;
-  currentHref = json._links.self.href;
+  currentHref = json._links.self.href.replace("10.226.41.51", "ec.europa.eu");
+  console.Log("currentHref: "+currentHref);
   loadedRelationTree = clickedArray;
   // Convert the original JSON get from ESCO to new JSON format that is displayable.
   output = getSecLvlNodesByClickingBtn(json, clickedArray);
@@ -721,7 +722,7 @@ function loadTreeByClickingBtn(ht, json, clickedArray, callback){
   // Use promise to make sure all responses from API requests are retrieved before the hypertree construction and visualization.
   var promises = clickedArray.map(({href}) => new Promise((resolve, reject) => {
     new Request.JSON({
-      url: href,
+      url: href.replace("10.226.41.51", "ec.europa.eu"),
       // If the GET request is successful, build the hyper tree with the JSON object inside the file.
       onSuccess: function(json) {
         // Store this secondary node JSON to use globally.
@@ -979,6 +980,7 @@ function getSearchResult(ht, href){
   myRequest.onreadystatechange = function () { 
     // If server responds successfully
     if (myRequest.readyState === 4 && myRequest.status === 200) {
+      console.Log("request successful");
       // Switch the class of description tag to expanded with new style.
       $('search-range').style.visibility = 'visible';
       var resJSON = JSON.parse(myRequest.responseText);
@@ -1005,7 +1007,8 @@ function buildResultList(ht, resJSON, callback){
       console.log(each);
       // Construct the clickable occupation names into a list.
       var listItem = "<a class=\"search-result-link list-group-item list-group-item-action\" href=\"" 
-      + each._links.self.href + "\" >" + each._links.self.title + "</a>";
+      + each._links.self.href.replace("10.226.41.51", "ec.europa.eu") + "\" >" + each._links.self.title + "</a>";
+      console.Log("listItem: "+listItem);
 
       $('search-result').insertAdjacentHTML('beforeend',listItem);
     });
